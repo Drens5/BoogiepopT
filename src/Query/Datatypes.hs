@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveGeneric     #-}
-{-# LANGUAGE OverloadedStrings #-}
 
 {-| Transliterates the relevant fields and datatypes from anilist Api.
 
@@ -16,6 +15,9 @@ and any previous code still works without any modifications.
 For aliases however one needs to define seperate record types.
 
 It is still required to write a response datatype for a request.
+
+To avoid nameclashes record fields will be prefixed by an indicator of the
+type. This corresponds to needing the query to have these names as aliases.
 -}
 
 module Query.Datatypes
@@ -45,8 +47,8 @@ module Query.Datatypes
 
 import Data.Aeson (ToJSON, FromJSON, Value)
 import Data.Map.Strict (Map)
-import GHC.Generics
 import Data.Text (Text)
+import GHC.Generics
 
 -- | Type to encapsulate a GraphQL service.
 data Service = Service
@@ -65,98 +67,100 @@ instance FromJSON Service
 -- Note that the value constructor now defines the required alias of this field.
 -- The Api does not guarantee that these values are non-null.
 data UsersPage = UsersPage
-  { pageInfo :: Maybe PageInfo
-  , users :: Maybe [User]
+  { userPageInfo :: Maybe PageInfo
+  , userPageusers :: Maybe [User]
   } deriving (Generic, Show)
 instance FromJSON UsersPage
 
 -- | Contains information about the page datatype.
 -- The Api does not guarantee the these values are non-null.
 data PageInfo = PageInfo
-  { total :: Maybe Int
-  , perPage :: Maybe Int
-  , currentPage :: Maybe Int
-  , lastPage :: Maybe Int
-  , hasNextPage :: Maybe Bool
+  { pageInfoTotal :: Maybe Int
+  , pageInfoPerPage :: Maybe Int
+  , pageInfoCurrentPage :: Maybe Int
+  , pageInfoLastPage :: Maybe Int
+  , pageInfoHasNextPage :: Maybe Bool
   } deriving (Generic, Show)
 instance FromJSON PageInfo
 
 -- | Information of a user.
 data User = User
-  { id :: Maybe Int  -- ^ Guaranteed non-null on request.
-  , name :: Maybe Text  -- ^ Guaranteed non-null on request.
-  , statistics :: Maybe UserStatisticTypes
+  { userId :: Maybe Int  -- ^ Guaranteed non-null on request.
+  , userName :: Maybe Text  -- ^ Guaranteed non-null on request.
+  , userSiteUrl :: Maybe Text
+  , userStatistics :: Maybe UserStatisticTypes
   } deriving (Generic, Show)
 instance FromJSON User
 
 -- | Types of userstatistics apparently either anime or manga.
 data UserStatisticTypes = UserStatisticTypes
-  { anime :: Maybe UserStatistics
+  { userStatisticTypesAnime :: Maybe UserStatistics
   } deriving (Generic, Show)
 instance FromJSON UserStatisticTypes
 
 -- | Statistics of a user for anime or manga.
 data UserStatistics = UserStatistics
-  { count :: Maybe Int  -- ^ Guaranteed non-null on request.
-  , minutesWatched :: Maybe Int  -- ^ Guaranteed non-null on request.
-  , genres :: Maybe [UserGenreStatistic]
-  , tags :: Maybe [UserTagStatistic]
+  { userStatisticsCount :: Maybe Int  -- ^ Guaranteed non-null on request.
+  , userStatisticsMinutesWatched :: Maybe Int  -- ^ Guaranteed non-null on request.
+  , userStatisticsGenres :: Maybe [UserGenreStatistic]
+  , userStatisticsTags :: Maybe [UserTagStatistic]
   } deriving (Generic, Show)
 instance FromJSON UserStatistics
 
 -- | Statistic on a genre for a user.
 data UserGenreStatistic = UserGenreStatistic
-  { count :: Maybe Int  -- ^ Guaranteed non-null on request.
-  , minutesWatched :: Maybe Int  -- ^ Guaranteed non-null on request.
-  , mediaIds :: Maybe [Int]  -- ^ Guaranteed non-null on request. Weird ...!
-  , genre :: Maybe Text
+  { userGenreStatisticCount :: Maybe Int  -- ^ Guaranteed non-null on request.
+  , userGenreStatisticMinutesWatched :: Maybe Int  -- ^ Guaranteed non-null on request.
+  , userGenreStatisticMediaIds :: Maybe [Int]  -- ^ Guaranteed non-null on request. Weird ...!
+  , userGenreStatisticGenre :: Maybe Text
   } deriving (Generic, Show)
 instance FromJSON UserGenreStatistic
 
 -- | Statistic on a tag for a user.
 data UserTagStatistic = UserTagStatistic
-  { count :: Maybe Int  -- ^ Guaranteed non-null on request.
-  , minutesWatched :: Maybe Int  -- ^ Guaranteed non-null on request.
-  , mediaIds :: Maybe [Int]  -- ^ Guaranteed non-null on request. Weird ...!
-  , tag :: Maybe MediaTag
+  { userTagStatisticCount :: Maybe Int  -- ^ Guaranteed non-null on request.
+  , userTagStatisticMinutesWatched :: Maybe Int  -- ^ Guaranteed non-null on request.
+  , userTagStatisticMediaIds :: Maybe [Int]  -- ^ Guaranteed non-null on request. Weird ...!
+  , userTagStatisticTag :: Maybe MediaTag
   } deriving (Generic, Show)
 instance FromJSON UserTagStatistic
 
 -- | Information of a tag.
 data MediaTag = MediaTag
-  { id :: Maybe Int  -- ^ Guaranteed non-null on request.
-  , name :: Maybe Text  -- ^ Guaranteed non-null on request.
-  , description :: Maybe Text
-  , category :: Maybe Text
-  , rank :: Maybe Int  -- ^ w.r.t. this media, null if there is no such context
+  { mediaTagId :: Maybe Int  -- ^ Guaranteed non-null on request.
+  , mediaTagName :: Maybe Text  -- ^ Guaranteed non-null on request.
+  , mediaTagDescription :: Maybe Text
+  , mediaTagCategory :: Maybe Text
+  , mediaTagRank :: Maybe Int  -- ^ w.r.t. this media, null if there is no such context
+  , mediaTagIsMediaSpoiler :: Maybe Bool  -- ^ same remark as above
   } deriving (Generic, Show)
 instance FromJSON MediaTag
 
 -- | Information on the anime or manga list of a user.
 data MediaListCollection = MediaListCollection
-  { lists :: Maybe [MediaListGroup]
-  , user :: Maybe User
-  , hasNextChunk :: Maybe Bool
+  { mediaListCollectionLists :: Maybe [MediaListGroup]
+  , mediaListCollectionUser :: Maybe User
+  , mediaListCollectionHasNextChunk :: Maybe Bool
   } deriving (Generic, Show)
 instance FromJSON MediaListCollection
 
 -- | Header, so to say, for a media list.
 data MediaListGroup = MediaListGroup
-  { entries :: Maybe [MediaList]
-  , name :: Maybe Text
-  , status :: Maybe MediaListStatus  -- ^ I don't know the behaviour of this.
+  { mediaListGroupEntries :: Maybe [MediaList]
+  , mediaListGroupName :: Maybe Text
+  , mediaListGroupStatus :: Maybe MediaListStatus  -- ^ I don't know the behaviour of this.
     -- Especially on custom lists.
   } deriving (Generic, Show)
 instance FromJSON MediaListGroup
 
 -- | Media entry that appears on someone lists.
 data MediaList = MediaList
-  { id :: Maybe Int  -- ^ Guaranteed non-null on request.
-  , userId :: Maybe Int  -- ^ Guaranteeed non-null on request.
-  , mediaId :: Maybe Int  -- ^ Guaranteed non-null on request.
-  , repeat :: Maybe Int
-  , media :: Maybe Media
-  , user :: Maybe User
+  { mediaListId :: Maybe Int  -- ^ Guaranteed non-null on request.
+  , mediaListUserId :: Maybe Int  -- ^ Guaranteeed non-null on request.
+  , mediaListMediaId :: Maybe Int  -- ^ Guaranteed non-null on request.
+  , mediaListRepeat :: Maybe Int
+  , mediaListMedia :: Maybe Media
+  , mediaListUser :: Maybe User
   } deriving (Generic, Show)
 instance FromJSON MediaList
 
@@ -175,28 +179,28 @@ instance ToJSON MediaListStatus
 
 -- | Information about a certain media entry.
 data Media = Media
-  { id :: Maybe Int  -- ^ Guaranteed non-null on request.
-  , title :: Maybe MediaTitle
-  , format :: Maybe MediaFormat
-  , status :: Maybe MediaStatus
-  , description :: Maybe Text
-  , episodes :: Maybe Int
-  , trailer :: Maybe MediaTrailer
-  , genres :: Maybe [Text]
-  , averageScore :: Maybe Int
-  , meanScore :: Maybe Int
-  , popularity :: Maybe Int
-  , tags :: Maybe [MediaTag]
-  , stats :: Maybe MediaStats
+  { mediaId :: Maybe Int  -- ^ Guaranteed non-null on request.
+  , mediaTitle :: Maybe MediaTitle
+  , mediaFormat :: Maybe MediaFormat
+  , mediaStatus :: Maybe MediaStatus
+  , mediaDescription :: Maybe Text
+  , mediaEpisodes :: Maybe Int
+  , mediaTrailer :: Maybe MediaTrailer
+  , mediaGenres :: Maybe [Text]
+  , mediaAverageScore :: Maybe Int
+  , mediaMeanScore :: Maybe Int
+  , mediaPopularity :: Maybe Int
+  , mediaTags :: Maybe [MediaTag]
+  , mediaStats :: Maybe MediaStats
   } deriving (Generic, Show)
 instance FromJSON Media
 
 -- | Official titles of the media in various langauges.
 data MediaTitle = MediaTitle
-  { romaji :: Maybe Text
-  , english :: Maybe Text
-  , native :: Maybe Text
-  , userPreferred :: Maybe Text
+  { mediaTitleRomaji :: Maybe Text
+  , mediaTitleEnglish :: Maybe Text
+  , mediaTitleNative :: Maybe Text
+  , mediaTitleUserPreferred :: Maybe Text
   } deriving (Generic, Show)
 instance FromJSON MediaTitle
 
@@ -229,19 +233,19 @@ instance FromJSON MediaStatus
 instance ToJSON MediaStatus
 
 data MediaTrailer = MediaTrailer
-  { site :: Maybe Text
+  { mediaTrailerSite :: Maybe Text
   } deriving (Generic, Show)
 instance FromJSON MediaTrailer
 
 -- | Distribution of the scores of the anime.
 data MediaStats = MediaStats
-  { scoreDistribution :: Maybe [ScoreDistribution]
+  { mediaStatsScoreDistribution :: Maybe [ScoreDistribution]
   } deriving (Generic, Show)
 instance FromJSON MediaStats
 
 -- | Amount of list entries with that score.
 data ScoreDistribution = ScoreDistribution
-  { score :: Maybe Int
-  , amount :: Maybe Int
+  { scoreDistributionScore :: Maybe Int
+  , scoreDistributionAmount :: Maybe Int
   } deriving (Generic, Show)
 instance FromJSON ScoreDistribution

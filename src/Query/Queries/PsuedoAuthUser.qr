@@ -1,0 +1,29 @@
+query PsuedoAuthUser($name: String!) {
+  psuedoAuthUser: User(name: $name) {
+    userId: id
+    userSiteUrl: siteUrl
+    userStatistics: statistics {
+      userStatisticTypesAnime: anime {
+        userStatisticsCount: count
+        userStatisticsMinutesWatched: minutesWatched
+        userStatisticsGenres: genres {
+          userGenreStatisticCount: count
+          userGenreStatisticMinutesWatched: minutesWatched
+          userGenreStatisticMediaIds: mediaIds
+          userGenreStatisticGenre: genre
+        }
+        userStatisticsTags: tags {
+          userTagStatisticCount: count
+          userTagStatisticMinutesWatched: minutesWatched
+          userTagStatisticMediaIds: mediaIds
+          userTagStatisticTag: tag {
+            mediaTagId: id
+            mediaTagName: name
+            mediaTagDescription: description
+            mediaTagCategory: category
+          }
+        }
+      }
+    }
+  }
+}
