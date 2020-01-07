@@ -69,7 +69,7 @@ instance FromJSON Service
 data UsersPage = UsersPage
   { userPageInfo :: Maybe PageInfo
   , userPageusers :: Maybe [User]
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON UsersPage
 
 -- | Contains information about the page datatype.
@@ -80,7 +80,7 @@ data PageInfo = PageInfo
   , pageInfoCurrentPage :: Maybe Int
   , pageInfoLastPage :: Maybe Int
   , pageInfoHasNextPage :: Maybe Bool
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON PageInfo
 
 -- | Information of a user.
@@ -89,13 +89,13 @@ data User = User
   , userName :: Maybe Text  -- ^ Guaranteed non-null on request.
   , userSiteUrl :: Maybe Text
   , userStatistics :: Maybe UserStatisticTypes
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON User
 
 -- | Types of userstatistics apparently either anime or manga.
 data UserStatisticTypes = UserStatisticTypes
   { userStatisticTypesAnime :: Maybe UserStatistics
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON UserStatisticTypes
 
 -- | Statistics of a user for anime or manga.
@@ -104,7 +104,7 @@ data UserStatistics = UserStatistics
   , userStatisticsMinutesWatched :: Maybe Int  -- ^ Guaranteed non-null on request.
   , userStatisticsGenres :: Maybe [UserGenreStatistic]
   , userStatisticsTags :: Maybe [UserTagStatistic]
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON UserStatistics
 
 -- | Statistic on a genre for a user.
@@ -113,7 +113,7 @@ data UserGenreStatistic = UserGenreStatistic
   , userGenreStatisticMinutesWatched :: Maybe Int  -- ^ Guaranteed non-null on request.
   , userGenreStatisticMediaIds :: Maybe [Int]  -- ^ Guaranteed non-null on request. Weird ...!
   , userGenreStatisticGenre :: Maybe Text
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON UserGenreStatistic
 
 -- | Statistic on a tag for a user.
@@ -122,7 +122,7 @@ data UserTagStatistic = UserTagStatistic
   , userTagStatisticMinutesWatched :: Maybe Int  -- ^ Guaranteed non-null on request.
   , userTagStatisticMediaIds :: Maybe [Int]  -- ^ Guaranteed non-null on request. Weird ...!
   , userTagStatisticTag :: Maybe MediaTag
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON UserTagStatistic
 
 -- | Information of a tag.
@@ -133,7 +133,7 @@ data MediaTag = MediaTag
   , mediaTagCategory :: Maybe Text
   , mediaTagRank :: Maybe Int  -- ^ w.r.t. this media, null if there is no such context
   , mediaTagIsMediaSpoiler :: Maybe Bool  -- ^ same remark as above
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON MediaTag
 
 -- | Information on the anime or manga list of a user.
@@ -141,7 +141,7 @@ data MediaListCollection = MediaListCollection
   { mediaListCollectionLists :: Maybe [MediaListGroup]
   , mediaListCollectionUser :: Maybe User
   , mediaListCollectionHasNextChunk :: Maybe Bool
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON MediaListCollection
 
 -- | Header, so to say, for a media list.
@@ -150,7 +150,7 @@ data MediaListGroup = MediaListGroup
   , mediaListGroupName :: Maybe Text
   , mediaListGroupStatus :: Maybe MediaListStatus  -- ^ I don't know the behaviour of this.
     -- Especially on custom lists.
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON MediaListGroup
 
 -- | Media entry that appears on someone lists.
@@ -161,7 +161,7 @@ data MediaList = MediaList
   , mediaListRepeat :: Maybe Int
   , mediaListMedia :: Maybe Media
   , mediaListUser :: Maybe User
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON MediaList
 
 -- | Enum of possible status of a media.
@@ -173,7 +173,7 @@ data MediaListStatus =
   | DROPPED
   | PAUSED
   | REPEATING
-  deriving (Generic, Show)
+  deriving (Generic, Eq, Show)
 instance FromJSON MediaListStatus
 instance ToJSON MediaListStatus
 
@@ -192,7 +192,7 @@ data Media = Media
   , mediaPopularity :: Maybe Int
   , mediaTags :: Maybe [MediaTag]
   , mediaStats :: Maybe MediaStats
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON Media
 
 -- | Official titles of the media in various langauges.
@@ -201,7 +201,7 @@ data MediaTitle = MediaTitle
   , mediaTitleEnglish :: Maybe Text
   , mediaTitleNative :: Maybe Text
   , mediaTitleUserPreferred :: Maybe Text
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON MediaTitle
 
 -- | The format a media can be released in.
@@ -217,7 +217,7 @@ data MediaFormat =
   | MANGA
   | NOVEL
   | ONE_SHOT
-  deriving (Generic, Show)
+  deriving (Generic, Eq, Show)
 instance FromJSON MediaFormat
 instance ToJSON MediaFormat
 
@@ -228,24 +228,24 @@ data MediaStatus =
   | RELEASING
   | NOT_YET_RELEASED
   | CANCELLED
-  deriving (Generic, Show)
+  deriving (Generic, Eq, Show)
 instance FromJSON MediaStatus
 instance ToJSON MediaStatus
 
 data MediaTrailer = MediaTrailer
   { mediaTrailerSite :: Maybe Text
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON MediaTrailer
 
 -- | Distribution of the scores of the anime.
 data MediaStats = MediaStats
   { mediaStatsScoreDistribution :: Maybe [ScoreDistribution]
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON MediaStats
 
 -- | Amount of list entries with that score.
 data ScoreDistribution = ScoreDistribution
   { scoreDistributionScore :: Maybe Int
   , scoreDistributionAmount :: Maybe Int
-  } deriving (Generic, Show)
+  } deriving (Generic, Eq, Show)
 instance FromJSON ScoreDistribution

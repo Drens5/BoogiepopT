@@ -1,0 +1,14 @@
+{
+    "data": {
+      "psuedoAuthUser": {
+        "userId": 137485,
+        "userSiteUrl": "https://anilist.co/user/137485",
+        "userStatistics": {
+          "userStatisticTypesAnime": {
+            "userStatisticsCount": 302,
+            "userStatisticsMinutesWatched": 182457
+          }
+        }
+      }
+    }
+}

@@ -3,13 +3,16 @@
 Creating service values is wrapping the query and variables in a Service
 datatype therefore this is uniform across all queries.
 
-Use this to create services instead of explicitly exporting the value
-constructors of the Service datatype.
+However this module provides handy functions which allow to make a service by
+passing in the values for the required variables for the query.
+Hence, make doing top level requests easier.
+
+Naming convention: serviceQueryOperationName.
 -}
 
 module Query.Service
   ( -- * Service creation functions.
-    createService
+    servicePsuedoAuthUser
   ) where
 
 import Data.Aeson (Value)
@@ -24,3 +27,9 @@ import Query.Variables
 -- the IO monad. It's easier to use with fmap.
 createService :: Map Text Value -> Text -> Service
 createService variables query = Service query variables
+
+-- | Create a service for the PsuedoAuthUser query operation by passing the
+-- variable values for this operation.
+servicePsuedoAuthUser :: Text -> IO Service
+servicePsuedoAuthUser name = createService (variablesPsuedoAuthUser
+  name) <$> loadPsuedoAuthUser
