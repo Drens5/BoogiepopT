@@ -14,7 +14,8 @@ The naming convention for these top level actions is loadQueryOperationName.
 
 module Query.Load
   ( -- * Actions which load a query
-   loadPsuedoAuthUser
+    loadPsuedoAuthUser
+  , loadUserMediaList
   ) where
 
 import Prelude hiding (readFile)
@@ -25,3 +26,7 @@ import Data.Text.IO (readFile)
 -- recommendation.
 loadPsuedoAuthUser :: IO Text
 loadPsuedoAuthUser = readFile "src/Query/Queries/PsuedoAuthUser.qr"
+
+-- | Query that gets information of the media on a user's list.
+loadUserMediaList :: IO Text
+loadUserMediaList = readFile "src/Query/Queries/UserMediaList.qr"

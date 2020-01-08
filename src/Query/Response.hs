@@ -25,8 +25,10 @@ module Query.Response
   ( -- * Top level query response record types.
     TopLevel (..)
   , DataPsuedoAuthUser (..)
+  , DataUserMediaList (..)
     -- * Functions to extract the data field from a response.
   , dataPsuedoAuthUser
+  , dataUserMediaList
   ) where
 
 import Data.Aeson (FromJSON, Result, Value, fromJSON, parseJSON, withObject,
@@ -49,6 +51,12 @@ instance FromJSON TopLevel where
     <$> v .:? "data"
     <*> v .:? "errors"
 
+-- | Parse the errors field from a response of a GraphQL service request.
+-- The errors field has to be confirmed non-null
+parseError :: Value -> Result Value
+parseError obj = (fromJSON obj :: Result TopLevel) >>=
+  (fromJSON . fromJust . topLevelError)
+
 -- | Top level fields in the data field of the response for the PsuedoAuthUser
 -- query operation.
 -- Wrapped in Maybe, since if something goes wrong data will be null.
@@ -64,8 +72,16 @@ dataPsuedoAuthUser :: Value -> Result DataPsuedoAuthUser
 dataPsuedoAuthUser obj = (fromJSON obj :: Result TopLevel) >>=
   (fromJSON . fromJust . topLevelData)
 
--- | Parse the errors field from a response of a GraphQL service request.
--- The errors field has to be confirmed non-null
-parseError :: Value -> Result Value
-parseError obj = (fromJSON obj :: Result TopLevel) >>=
-  (fromJSON . fromJust . topLevelError)
+-- | Top level fields in the data field of the response for the UserMediaList
+-- query operation.
+data DataUserMediaList = DataUserMediaList
+  { userMediaList :: Maybe MediaListCollection
+  } deriving (Generic, Eq, Show)
+instance FromJSON DataUserMediaList
+
+-- | Parse the data field for the UserMediaList query operation, from the
+-- object received as response.
+-- The data field has to be confirmed non-null.
+dataUserMediaList :: Value -> Result DataUserMediaList
+dataUserMediaList obj = (fromJSON obj :: Result TopLevel) >>=
+  (fromJSON . fromJust . topLevelData)

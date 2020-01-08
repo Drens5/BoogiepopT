@@ -1,0 +1,27 @@
+query UserMediaList($userId: Int!, $chunk: Int!) {
+  userMediaList: MediaListCollection(userId: $userId, type: ANIME,
+    perChunk: 500, chunk: $chunk,
+      status_in: [CURRENT, COMPLETED, PAUSED, DROPPED, REPEATING]) {
+    mediaListCollectionUser: user {
+      userId: id
+    }
+    mediaListCollectionHasNextChunk: hasNextChunk
+    mediaListCollectionLists: lists {
+      mediaListGroupStatus: status
+      mediaListGroupEntries: entries {
+        mediaListStatus: status
+        mediaListMedia: media {
+          mediaId: id
+          mediaAverageScore: averageScore
+          mediaMeanScore: meanScore
+          mediaGenres: genres
+          mediaTags: tags {
+            mediaTagId: id
+            mediaTagName: name
+            mediaTagRank: rank
+          }
+        }
+      }
+    }
+  }
+}

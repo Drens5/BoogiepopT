@@ -158,6 +158,7 @@ data MediaList = MediaList
   { mediaListId :: Maybe Int  -- ^ Guaranteed non-null on request.
   , mediaListUserId :: Maybe Int  -- ^ Guaranteeed non-null on request.
   , mediaListMediaId :: Maybe Int  -- ^ Guaranteed non-null on request.
+  , mediaListStatus :: Maybe MediaListStatus
   , mediaListRepeat :: Maybe Int
   , mediaListMedia :: Maybe Media
   , mediaListUser :: Maybe User

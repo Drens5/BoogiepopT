@@ -13,6 +13,7 @@ Naming convention: serviceQueryOperationName.
 module Query.Service
   ( -- * Service creation functions.
     servicePsuedoAuthUser
+  , serviceUserMediaList
   ) where
 
 import Data.Aeson (Value)
@@ -33,3 +34,7 @@ createService variables query = Service query variables
 servicePsuedoAuthUser :: Text -> IO Service
 servicePsuedoAuthUser name = createService (variablesPsuedoAuthUser
   name) <$> loadPsuedoAuthUser
+
+serviceUserMediaList :: Integer -> Integer -> IO Service
+serviceUserMediaList chunk userId = createService (variablesUserMediaList
+  chunk userId) <$> loadUserMediaList

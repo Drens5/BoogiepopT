@@ -18,21 +18,22 @@ import Test.Hspec
 import Query.Datatypes
 import Query.Request (request)
 import Query.Response
-import Query.Service (servicePsuedoAuthUser)
+import Query.Service
 import System.IO (stderr, hPrint)
 
 spec :: Spec
 spec = do
   requestSpec
+  mockQueryTestUserMediaList
 
-runRequest :: IO Value
-runRequest = do
-  service <- servicePsuedoAuthUser "Drens5"
+runRequest :: IO Service -> IO Value
+runRequest service' = do
+  service <- service'
   runReq defaultHttpConfig $ request service
 
-runRequestWithPrint :: IO Value
-runRequestWithPrint = do
-  service <- servicePsuedoAuthUser "Drens5"
+runRequestWithPrint :: IO Service -> IO Value
+runRequestWithPrint service' = do
+  service <- service'
   v <- runReq defaultHttpConfig $ request service
   hPrint stderr v
   return v
@@ -40,7 +41,17 @@ runRequestWithPrint = do
 -- | Tests for request function.
 -- Checks one field to see if the request succeeded
 requestSpec :: Spec
-requestSpec = before runRequest $ do
+requestSpec = before (runRequest (servicePsuedoAuthUser "Drens5")) $ do
   describe "requestSpec" $ do
     it "has a non-null data field" $ \r -> do
       ((isJust . psuedoAuthUser) <$> dataPsuedoAuthUser r) `shouldBe` Success True
+
+-- | Mock tests to see on stderr if we get a reasonable response.
+-- Otherwise run with runRequest instead of runRequestWithPrint for check on
+-- non-null data field without printing to stderr.
+-- Succeeds if the data field is non-null.
+mockQueryTestUserMediaList :: Spec
+mockQueryTestUserMediaList = before (runRequest (serviceUserMediaList 1 137485)) $ do
+  describe "mockQueryTestUserMediaList" $ do
+    it "has a non-null data field" $ \r -> do
+      ((isJust . userMediaList) <$> dataUserMediaList r) `shouldBe` Success True
