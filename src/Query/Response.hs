@@ -26,9 +26,11 @@ module Query.Response
     TopLevel (..)
   , DataPsuedoAuthUser (..)
   , DataUserMediaList (..)
+  , DataArbitraryUsers (..)
     -- * Functions to extract the data field from a response.
   , dataPsuedoAuthUser
   , dataUserMediaList
+  , dataArbitraryUsers
   ) where
 
 import Data.Aeson (FromJSON, Result, Value, fromJSON, parseJSON, withObject,
@@ -84,4 +86,17 @@ instance FromJSON DataUserMediaList
 -- The data field has to be confirmed non-null.
 dataUserMediaList :: Value -> Result DataUserMediaList
 dataUserMediaList obj = (fromJSON obj :: Result TopLevel) >>=
+  (fromJSON . fromJust . topLevelData)
+
+-- | Top level fields in thedata field of the response for the ArbitraryUsers
+-- query operation.
+data DataArbitraryUsers = DataArbitraryUsers
+  { arbitraryUsers :: Maybe UsersPage
+  } deriving (Generic, Eq, Show)
+instance FromJSON DataArbitraryUsers
+
+-- | Parse the data field for the ArbitraryUsers query operation, from the
+-- object received as response.
+dataArbitraryUsers :: Value -> Result DataArbitraryUsers
+dataArbitraryUsers obj = (fromJSON obj :: Result TopLevel) >>=
   (fromJSON . fromJust . topLevelData)

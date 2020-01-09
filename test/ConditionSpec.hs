@@ -19,6 +19,7 @@ import Test.Hspec
 spec :: Spec
 spec = do
   tagConditionSpec
+  genreConditionSpec
 
 testMedia :: Media
 testMedia = Media
@@ -99,3 +100,16 @@ tagConditionSpec = do
         `shouldBe` True
       tagCondition testMedia (Weak ["TestTag 53", "aasdf", "TestTag 4", "as",
         "daffas", "sdffww"]) `shouldBe` True
+
+genreConditionSpec :: Spec
+genreConditionSpec = do
+  describe "genreConditionSpec" $ do
+    it "works for strong coupled genres" $ do
+      genreCondition testMedia (Strong "Comedy") `shouldBe` True
+      genreCondition testMedia (Strong "Fantasy") `shouldBe` False
+
+    it "works for weak coupled genres" $ do
+      genreCondition testMedia (Weak ["sfdasf", "dfaf", "Comedy", "adsfa"])
+        `shouldBe` True
+      genreCondition testMedia (Weak ["sfdasf", "dfaf", "adfas", "adsfa"])
+        `shouldBe` False

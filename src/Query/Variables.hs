@@ -11,6 +11,7 @@ module Query.Variables
   ( -- * Variable creation functions.
     variablesPsuedoAuthUser
   , variablesUserMediaList
+  , variablesArbitraryUsers
   ) where
 
 import Data.Aeson (Value (..))
@@ -25,3 +26,6 @@ variablesPsuedoAuthUser name = singleton "name" (String name)
 variablesUserMediaList :: Integer -> Integer -> Map Text Value
 variablesUserMediaList chunk userId = fromList [("userId", Number (scientific
   userId 0)), ("chunk", Number (scientific chunk 0))]
+
+variablesArbitraryUsers :: Integer -> Map Text Value
+variablesArbitraryUsers page = singleton "page" (Number (scientific page 0))

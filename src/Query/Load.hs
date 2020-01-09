@@ -16,6 +16,7 @@ module Query.Load
   ( -- * Actions which load a query
     loadPsuedoAuthUser
   , loadUserMediaList
+  , loadArbitraryUsers
   ) where
 
 import Prelude hiding (readFile)
@@ -30,3 +31,7 @@ loadPsuedoAuthUser = readFile "src/Query/Queries/PsuedoAuthUser.qr"
 -- | Query that gets information of the media on a user's list.
 loadUserMediaList :: IO Text
 loadUserMediaList = readFile "src/Query/Queries/UserMediaList.qr"
+
+-- | Query that gets minimal information about arbitrary users.
+loadArbitraryUsers :: IO Text
+loadArbitraryUsers = readFile "src/Query/Queries/ArbitraryUsers.qr"

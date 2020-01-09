@@ -68,7 +68,7 @@ instance FromJSON Service
 -- The Api does not guarantee that these values are non-null.
 data UsersPage = UsersPage
   { userPageInfo :: Maybe PageInfo
-  , userPageusers :: Maybe [User]
+  , userPageUsers :: Maybe [User]
   } deriving (Generic, Eq, Show)
 instance FromJSON UsersPage
 

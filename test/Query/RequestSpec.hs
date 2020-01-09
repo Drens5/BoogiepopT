@@ -23,8 +23,12 @@ import System.IO (stderr, hPrint)
 
 spec :: Spec
 spec = do
-  requestSpec
-  mockQueryTestUserMediaList
+  describe "Tests that are turned off." $ do
+    it "" $ do
+      pendingWith "requestSpec, mockQueryTestUserMediaList, mockQueryTestArbitraryUsers"
+  -- requestSpec
+  -- mockQueryTestUserMediaList
+  -- mockQueryTestArbitraryUsers
 
 runRequest :: IO Service -> IO Value
 runRequest service' = do
@@ -55,3 +59,9 @@ mockQueryTestUserMediaList = before (runRequest (serviceUserMediaList 1 137485))
   describe "mockQueryTestUserMediaList" $ do
     it "has a non-null data field" $ \r -> do
       ((isJust . userMediaList) <$> dataUserMediaList r) `shouldBe` Success True
+
+mockQueryTestArbitraryUsers :: Spec
+mockQueryTestArbitraryUsers = before (runRequest (serviceArbitraryUsers 1)) $ do
+  describe "mockQueryTestArbitraryUsers" $ do
+    it "has a non-null data field" $ \r -> do
+      ((isJust . arbitraryUsers) <$> dataArbitraryUsers r) `shouldBe` Success True

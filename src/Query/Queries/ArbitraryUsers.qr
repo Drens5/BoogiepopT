@@ -1,0 +1,18 @@
+query ArbitraryUsers($page: Int!) {
+  arbitraryUsers: Page(page: $page, perPage: 50) {
+    userPageInfo: pageInfo {
+      pageInfoCurrentPage: currentPage
+      pageInfoLastPage: lastPage
+    }
+
+    userPageUsers: users {
+      userId: id
+      userStatistics: statistics {
+        userStatisticTypesAnime: anime {
+          userStatisticsCount: count
+          userStatisticsMinutesWatched: minutesWatched
+        }
+      }
+    }
+  }
+}

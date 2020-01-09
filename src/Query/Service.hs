@@ -14,6 +14,7 @@ module Query.Service
   ( -- * Service creation functions.
     servicePsuedoAuthUser
   , serviceUserMediaList
+  , serviceArbitraryUsers
   ) where
 
 import Data.Aeson (Value)
@@ -38,3 +39,7 @@ servicePsuedoAuthUser name = createService (variablesPsuedoAuthUser
 serviceUserMediaList :: Integer -> Integer -> IO Service
 serviceUserMediaList chunk userId = createService (variablesUserMediaList
   chunk userId) <$> loadUserMediaList
+
+serviceArbitraryUsers :: Integer -> IO Service
+serviceArbitraryUsers page = createService (variablesArbitraryUsers page) <$>
+  loadArbitraryUsers
