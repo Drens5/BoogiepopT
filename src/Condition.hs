@@ -44,8 +44,8 @@ tagCondition media (Weak tags) = head $ foldr step [] tags
       | otherwise = tagCondition media (Strong tag) : acc
 
 -- | Does the media have all the given tags, in a coupled sense.
-tagsCondition :: Media -> [Coupled Tag] -> Bool
-tagsCondition media = all (tagCondition media)
+tagsCondition :: [Coupled Tag] -> Media -> Bool
+tagsCondition ts media = all (tagCondition media) ts
 
 -- | Condition of whether the media has the given genre, same as tagCondition.
 genreCondition :: Media -> Coupled Genre -> Bool
@@ -58,5 +58,5 @@ genreCondition media (Weak genres) = head $ foldr step [] genres
       | otherwise = genreCondition media (Strong genre) : acc
 
 -- | Does the media have all the given genres, in a coupled sense.
-genresCondition :: Media -> [Coupled Genre] -> Bool
-genresCondition media = all (genreCondition media)
+genresCondition :: [Coupled Genre] -> Media -> Bool
+genresCondition gs media = all (genreCondition media) gs

@@ -16,24 +16,22 @@ import Data.Maybe (isJust)
 import Network.HTTP.Req
 import Test.Hspec
 import Query.Datatypes
-import Query.Request (request)
+import Query.Request (runRequest, runRequestSafe)
 import Query.Response
 import Query.Service
 import System.IO (stderr, hPrint)
+import Control.Monad (replicateM)
 
 spec :: Spec
 spec = do
-  describe "Tests that are turned off." $ do
+  describe "Tests are turned off." $ do
     it "" $ do
-      pendingWith "requestSpec, mockQueryTestUserMediaList, mockQueryTestArbitraryUsers"
+      pending
   -- requestSpec
   -- mockQueryTestUserMediaList
   -- mockQueryTestArbitraryUsers
-
-runRequest :: IO Service -> IO Value
-runRequest service' = do
-  service <- service'
-  runReq defaultHttpConfig $ request service
+  -- requestSafeSpec
+  -- rateTest
 
 runRequestWithPrint :: IO Service -> IO Value
 runRequestWithPrint service' = do
@@ -50,6 +48,14 @@ requestSpec = before (runRequest (servicePsuedoAuthUser "Drens5")) $ do
     it "has a non-null data field" $ \r -> do
       ((isJust . psuedoAuthUser) <$> dataPsuedoAuthUser r) `shouldBe` Success True
 
+-- | Tests for runRequestSafe.
+-- Succeeds if the data field is non-null
+requestSafeSpec :: Spec
+requestSafeSpec = before (runRequestSafe (servicePsuedoAuthUser "Drens5")) $ do
+  describe "requestSafeSpec" $ do
+    it "has a non-null data field" $ \r -> do
+      ((isJust . psuedoAuthUser) <$> dataPsuedoAuthUser r) `shouldBe` Success True
+
 -- | Mock tests to see on stderr if we get a reasonable response.
 -- Otherwise run with runRequest instead of runRequestWithPrint for check on
 -- non-null data field without printing to stderr.
@@ -60,8 +66,17 @@ mockQueryTestUserMediaList = before (runRequest (serviceUserMediaList 1 137485))
     it "has a non-null data field" $ \r -> do
       ((isJust . userMediaList) <$> dataUserMediaList r) `shouldBe` Success True
 
+ninetyRequests :: IO Value
+ninetyRequests = head <$> replicateM 100 (runRequestSafe (serviceArbitraryUsers 1))
+
 mockQueryTestArbitraryUsers :: Spec
 mockQueryTestArbitraryUsers = before (runRequest (serviceArbitraryUsers 1)) $ do
   describe "mockQueryTestArbitraryUsers" $ do
+    it "has a non-null data field" $ \r -> do
+      ((isJust . arbitraryUsers) <$> dataArbitraryUsers r) `shouldBe` Success True
+
+rateTest :: Spec
+rateTest = before ninetyRequests $ do
+  describe "rateTest" $ do
     it "has a non-null data field" $ \r -> do
       ((isJust . arbitraryUsers) <$> dataArbitraryUsers r) `shouldBe` Success True
