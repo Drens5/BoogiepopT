@@ -16,7 +16,7 @@ import Data.Maybe (isJust)
 import Network.HTTP.Req
 import Test.Hspec
 import Query.Datatypes
-import Query.Request (runRequest, runRequestSafe)
+import Query.Request (request, runRequest, runRequestSafe)
 import Query.Response
 import Query.Service
 import System.IO (stderr, hPrint)

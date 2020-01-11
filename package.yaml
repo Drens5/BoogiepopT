@@ -26,6 +26,7 @@ dependencies:
 - containers
 - http-client
 - http-types
+- optparse-applicative
 - random
 - req
 - scientific

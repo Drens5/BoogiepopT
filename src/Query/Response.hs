@@ -28,12 +28,13 @@ module Query.Response
   , DataUserMediaList (..)
   , DataArbitraryUsers (..)
     -- * Functions to extract the data field from a response.
+  , fromSuccess
   , dataPsuedoAuthUser
   , dataUserMediaList
   , dataArbitraryUsers
   ) where
 
-import Data.Aeson (FromJSON, Result, Value, fromJSON, parseJSON, withObject,
+import Data.Aeson (FromJSON, Result (..), Value, fromJSON, parseJSON, withObject,
   (.:?))
 import Data.Maybe (fromJust)
 import Data.Text (Text)
@@ -58,6 +59,12 @@ instance FromJSON TopLevel where
 parseError :: Value -> Result Value
 parseError obj = (fromJSON obj :: Result TopLevel) >>=
   (fromJSON . fromJust . topLevelError)
+
+-- | Extract the value wrapped in a Success value constructor.
+-- Throws an error if the value is wrapper in an Error value constructor.
+fromSuccess :: Result a -> a
+fromSuccess (Error s) = errorWithoutStackTrace $ "Result.fromSucces: Error" ++ s
+fromSuccess (Success x) = x
 
 -- | Top level fields in the data field of the response for the PsuedoAuthUser
 -- query operation.

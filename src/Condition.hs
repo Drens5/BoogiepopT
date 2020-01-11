@@ -27,6 +27,7 @@ import Query.Datatypes
 data Coupled a =
     Strong a
   | Weak [a]
+  deriving (Read, Show)
 
 type Genre = Text
 type Tag = Text

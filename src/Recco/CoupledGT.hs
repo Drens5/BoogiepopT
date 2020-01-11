@@ -25,7 +25,6 @@ module Recco.CoupledGT
 import Aggregate (nubC, mostOccurring, nubD, highestRated)
 import Condition (Coupled (..), Tag, Genre, tagsCondition, genresCondition)
 import Control.Exception (NonTermination (..), throwIO)
-import Control.Monad (filterM)
 import Criteria (watchedCriteria, timeWatched, animeCount)
 import Data.Aeson (Result (..))
 import Data.Maybe (fromJust)
@@ -33,14 +32,15 @@ import Data.Text (Text)
 import Query.Datatypes
 import Query.Request (runRequestSafe)
 import Query.Response (DataUserMediaList (..), DataArbitraryUsers (..),
-  dataUserMediaList, dataArbitraryUsers)
+  dataUserMediaList, dataArbitraryUsers, fromSuccess)
 import Query.Service (servicePsuedoAuthUser, serviceUserMediaList,
   serviceArbitraryUsers)
 import System.Random (getStdRandom, randomR)
 
 -- | Gives a list of recommended media, using the primitive coupledGT method.
-coupledGT :: User -> [Coupled Genre] -> [Coupled Tag] -> Int -> IO [(Int, Media)]
-coupledGT pAuth genres tags minUsersConsidered =
+coupledGT :: User -> [Coupled Genre] -> [Coupled Tag] -> Int -> Int ->
+  IO [(Int, Media)]
+coupledGT pAuth genres tags minUsersConsidered reccoAmount =
   let pAuthTimeWatched = timeWatched pAuth
       pAuthAnimeCount = animeCount pAuth
     in do
@@ -50,12 +50,12 @@ coupledGT pAuth genres tags minUsersConsidered =
         pAuthConditionAnimeCount minUsersConsidered [] []
       let selectedAnimeMinAgg = nubC selectedAnimeRaw
       let selectedAnimeMinAggFiltered = nubD pAuthUserList selectedAnimeMinAgg
-      return $ mostOccurring selectedAnimeMinAggFiltered 3 ++ highestRated
-        selectedAnimeMinAggFiltered 3  -- ^ 3 is arbitrary, change at will.
+      return $ mostOccurring selectedAnimeMinAggFiltered reccoAmount ++ highestRated
+        selectedAnimeMinAggFiltered reccoAmount
 
 -- |
--- k is the amount of users that we have yet to select m is the amount of anime that have to
--- satisfy the total condition.
+-- k is the amount of users that we have yet to select m is the amount of
+-- anime that have to satisfy the total condition.
 coupledGTCore :: User -> [Coupled Genre] -> [Coupled Tag] -> Int -> Int ->
   [Int] -> [Media] -> IO [Media]
 coupledGTCore pAuth gs ts m k seen acc
@@ -107,10 +107,6 @@ coupledGTCore pAuth gs ts m k seen acc
         case list of
           [] -> return acc' -- list is empty do nothing.
           _  -> return $ list : acc' -- list is not empty, add again.
-
-fromSuccess :: Result a -> a
-fromSuccess (Error s) = errorWithoutStackTrace $ "Result.fromSucces: Error" ++ s
-fromSuccess (Success x) = x
 
 -- | Generate a random number that does not appear in the list of exempt ones.
 unprecedentedRandomNumber :: Int -> [Int] -> Int -> IO Int

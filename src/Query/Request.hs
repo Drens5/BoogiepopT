@@ -14,9 +14,9 @@ A single function provides the framework to make the request.
 
 module Query.Request
   ( -- * Use to make requests with.
-    -- request
+    request
     -- * Use to make and run requests.
-    runRequest
+  , runRequest
   , runRequestSafe
   ) where
 
@@ -59,6 +59,6 @@ runRequestSafe service' = do
               service)  -- ^ no need to do IO for service again
           where
             waitTime = ((read . unpack . fromJust . lookup hRetryAfter)
-              (responseHeaders response) :: Int) * 1000000
+              (responseHeaders response) :: Int) * 1000000 -- ^ s -> ms
     Right v -> return v
     -- Left e -> throwIO e  -- ^ rethrow if it's another error
